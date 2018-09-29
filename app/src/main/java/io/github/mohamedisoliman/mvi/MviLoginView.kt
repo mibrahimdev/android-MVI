@@ -1,7 +1,6 @@
-package io.github.mohamedisoliman.mvi.mymvi
+package io.github.mohamedisoliman.mvi
 
-import io.github.mohamedisoliman.mvi.mymvi.base.MviView
-import io.github.mohamedisoliman.mvi.mymvi.base.MviViewState
+import io.github.mohamedisoliman.mvi.base.MviView
 import io.reactivex.Observable
 
 /**

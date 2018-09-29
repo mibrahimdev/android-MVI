@@ -1,6 +1,6 @@
-package io.github.mohamedisoliman.mvi.mymvi
+package io.github.mohamedisoliman.mvi
 
-import io.github.mohamedisoliman.mvi.mymvi.base.MviViewModel
+import io.github.mohamedisoliman.mvi.base.MviViewModel
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers

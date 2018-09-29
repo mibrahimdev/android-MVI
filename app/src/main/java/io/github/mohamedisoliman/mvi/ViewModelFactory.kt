@@ -1,9 +1,9 @@
-package io.github.mohamedisoliman.mvi.mymvi
+package io.github.mohamedisoliman.mvi
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import io.github.mohamedisoliman.mvi.mymvi.base.MviView
-import io.github.mohamedisoliman.mvi.mymvi.base.MviViewModel
+import io.github.mohamedisoliman.mvi.base.MviView
+import io.github.mohamedisoliman.mvi.base.MviViewModel
 
 /**
  * Created by Mohamed Ibrahim on 9/27/18.

@@ -1,4 +1,4 @@
-package io.github.mohamedisoliman.mvi.mymvi
+package io.github.mohamedisoliman.mvi
 
 /**
  *

@@ -1,13 +1,11 @@
-package io.github.mohamedisoliman.mvi.mymvi
+package io.github.mohamedisoliman.mvi
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
-import io.github.mohamedisoliman.mvi.R
-import io.github.mohamedisoliman.mvi.clickObservable
-import io.github.mohamedisoliman.mvi.mymvi.base.MviViewState
+import io.github.mohamedisoliman.mvi.base.MviViewState
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*

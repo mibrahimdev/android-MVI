@@ -1,4 +1,4 @@
-package io.github.mohamedisoliman.mvi.mymvi.base
+package io.github.mohamedisoliman.mvi.base
 
 import android.arch.lifecycle.ViewModel
 
