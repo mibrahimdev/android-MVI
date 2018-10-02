@@ -12,18 +12,18 @@ class LoginViewModel(private val mviView: MviLoginView) : MviViewModel(mviView) 
 
     fun setupLogin() {
         val observable: Observable<LoginViewState> = mviView.loginClick()
-                .flatMap { loginAction ->
+                .switchMap { loginAction ->
                     LoginUseCase(loginAction).execute()
                             .map<LoginViewState> { LoginViewState.Success("Hello there") }
+                            .startWith(LoginViewState.Loading(true))
                             .onErrorReturn { error ->
                                 when (error) {
                                     is LoginError.AuthorizationError -> LoginViewState.Error("Sorry Not Authorized")
                                     is LoginError.PasswordNotCorrect -> LoginViewState.Error(error.errorMessage)
-                                    else -> LoginViewState.Error("Something Went worng")
+                                    else -> LoginViewState.Error("Something Went wrong")
                                 }
-                            }.startWith(LoginViewState.Loading(true))
+                            }
                 }
-
 
         subscribeViewState(observable)
     }

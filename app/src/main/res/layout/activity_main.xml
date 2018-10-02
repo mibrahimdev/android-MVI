@@ -33,7 +33,7 @@
         android:text="Login"/>
 
     <ProgressBar
-        android:visibility="gone"
+        android:visibility="invisible"
         android:id="@+id/progress_circular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

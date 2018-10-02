@@ -39,7 +39,7 @@ class CommonMviObserver(val mvi: MviView) : DisposableObserver<MviViewState>() {
     }
 
     override fun onComplete() {
-        throw IllegalStateException()
+        //DO nothing
     }
 
 
