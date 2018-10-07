@@ -2,6 +2,7 @@ package io.github.mohamedisoliman.mvi.login
 
 import io.github.mohamedisoliman.mvi.base.MviViewModel
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 /**
  *
@@ -15,7 +16,6 @@ class LoginViewModel(private val mviView: MviLoginView) : MviViewModel(mviView) 
                 .switchMap { loginAction ->
                     LoginUseCase(loginAction).execute()
                             .map<LoginViewState> { LoginViewState.Success("Hello there") }
-                            .startWith(LoginViewState.Loading(true))
                             .onErrorReturn { error ->
                                 when (error) {
                                     is LoginError.AuthorizationError -> LoginViewState.Error("Sorry Not Authorized")
@@ -23,6 +23,9 @@ class LoginViewModel(private val mviView: MviLoginView) : MviViewModel(mviView) 
                                     else -> LoginViewState.Error("Something Went wrong")
                                 }
                             }
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .startWith(LoginViewState.Loading(true))
+
                 }
 
         subscribeViewState(observable)

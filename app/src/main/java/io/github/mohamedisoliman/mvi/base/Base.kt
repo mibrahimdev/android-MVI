@@ -16,9 +16,7 @@ open class MviViewModel(val mvi: MviView) : ViewModel() {
 
 
     fun subscribeViewState(observable: Observable<out MviViewState>) {
-        disposables.add(observable
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(CommonMviObserver(mvi)))
+        disposables.add(observable.subscribeWith(CommonMviObserver(mvi)))
     }
 
 
