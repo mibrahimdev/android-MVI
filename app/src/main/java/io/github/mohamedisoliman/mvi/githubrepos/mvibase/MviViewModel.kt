@@ -1,4 +1,4 @@
-package io.github.mohamedisoliman.mvi.mvibase
+package io.github.mohamedisoliman.mvi.githubrepos.mvibase
 
 import io.reactivex.Observable
 
