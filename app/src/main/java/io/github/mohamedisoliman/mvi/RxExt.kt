@@ -1,5 +1,6 @@
 package io.github.mohamedisoliman.mvi
 
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.AppCompatButton
 import android.view.View
 import io.reactivex.Observable
@@ -19,3 +20,12 @@ fun AppCompatButton.clickObservable(): Observable<Unit> {
 
     }
 }
+
+fun SwipeRefreshLayout.refreshObservable(): Observable<Any> =
+        Observable.create<Any> {
+            val listener = SwipeRefreshLayout.OnRefreshListener {
+                it.onNext(Unit)
+            }
+            setOnRefreshListener(listener)
+            it.setCancellable { setOnRefreshListener(null) }
+        }

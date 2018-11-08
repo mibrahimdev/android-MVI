@@ -2,9 +2,9 @@ package io.github.mohamedisoliman.mvi
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
-import io.github.mohamedisoliman.mvi.githubrepos.data.Repository
-import io.github.mohamedisoliman.mvi.githubrepos.data.remote.GithubApi
-import io.github.mohamedisoliman.mvi.githubrepos.data.remote.RemoteFactory
+import io.github.mohamedisoliman.mvi.data.Repository
+import io.github.mohamedisoliman.mvi.data.remote.GithubApi
+import io.github.mohamedisoliman.mvi.data.remote.RemoteFactory
 import timber.log.Timber
 
 /**
