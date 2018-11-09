@@ -1,14 +1,15 @@
-package io.github.mohamedisoliman.mvi.presentation
+package io.github.mohamedisoliman.mvi.ui
 
 import android.arch.lifecycle.ViewModel
 import io.github.mohamedisoliman.mvi.MVIApp
 import io.github.mohamedisoliman.mvi.data.Repository
 import io.github.mohamedisoliman.mvi.mvibase.MviViewModel
-import io.github.mohamedisoliman.mvi.presentation.LoadingReposResult.DUMMY
-import io.github.mohamedisoliman.mvi.presentation.LoadingReposResult.Failure
-import io.github.mohamedisoliman.mvi.presentation.LoadingReposResult.InFlight
-import io.github.mohamedisoliman.mvi.presentation.LoadingReposResult.Success
-import io.github.mohamedisoliman.mvi.presentation.ReposViewState.Loading
+import io.github.mohamedisoliman.mvi.ui.LoadingReposResult.DUMMY
+import io.github.mohamedisoliman.mvi.ui.LoadingReposResult.Failure
+import io.github.mohamedisoliman.mvi.ui.LoadingReposResult.InFlight
+import io.github.mohamedisoliman.mvi.ui.LoadingReposResult.MoreItemSuccess
+import io.github.mohamedisoliman.mvi.ui.LoadingReposResult.Success
+import io.github.mohamedisoliman.mvi.ui.ReposViewState.Loading
 import io.github.mohamedisoliman.mvi.usecase.GetGithubRepos
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -25,6 +26,8 @@ class ReposViewModel : ViewModel(), MviViewModel<ReposIntent, ReposViewState> {
   private val renderer = BehaviorSubject.create<ReposViewState>()
   private val intentsSubject = PublishSubject.create<ReposIntent>()
 
+  private var lastId: Long = -1
+
   override fun processIntents(intents: Observable<ReposIntent>) {
     intents.subscribe(intentsSubject)
   }
@@ -34,11 +37,17 @@ class ReposViewModel : ViewModel(), MviViewModel<ReposIntent, ReposViewState> {
     previousState: ReposViewState
   ): ReposViewState {
     return when (result) {
-      is InFlight -> {
-        previousState
-        Loading
+      is InFlight -> Loading
+      is Success -> ReposViewState.Success(result.reposList).also {
+        lastId = it.repos.lastIndex.toLong()
       }
-      is Success -> ReposViewState.Success(result.reposList)
+      is MoreItemSuccess -> if (previousState is ReposViewState.Success) {
+        val list = previousState.repos
+        list.toMutableList()
+            .addAll(result.reposList)//ADD new Items
+        lastId = list.lastIndex.toLong()
+        ReposViewState.Success(list)
+      } else ReposViewState.Failure(Throwable("Failed to get New Items"))
       is Failure -> ReposViewState.Failure(result.throwable)
       is DUMMY -> ReposViewState.DUMMY
     }
@@ -48,7 +57,7 @@ class ReposViewModel : ViewModel(), MviViewModel<ReposIntent, ReposViewState> {
     when (intent) {
       is ReposIntent.RefreshRepos -> ReposAction.RefreshRepos
       is ReposIntent.InitialLoadRepos -> ReposAction.InitialAction
-      is ReposIntent.LoadMoreRepos -> ReposAction.GetMoreItems(intent.lastId)
+      is ReposIntent.GetMoreRepos -> ReposAction.GetMoreItems(lastId)
       is ReposIntent.BookmarkRepo -> ReposAction.BookmarkRepo(intent.repoId)
     }
 
@@ -60,7 +69,10 @@ class ReposViewModel : ViewModel(), MviViewModel<ReposIntent, ReposViewState> {
                 shared.ofType(ReposAction.InitialAction::class.java).flatMap {
                   GetGithubRepos(reposRepistory).execute(it)
                 },
-                shared.ofType(ReposAction.BookmarkRepo::class.java).flatMap {
+                shared.ofType(ReposAction.RefreshRepos::class.java).flatMap {
+                  GetGithubRepos(reposRepistory).execute(it)
+                },
+                shared.ofType(ReposAction.GetMoreItems::class.java).flatMap {
                   GetGithubRepos(reposRepistory).execute(it)
                 }
             )

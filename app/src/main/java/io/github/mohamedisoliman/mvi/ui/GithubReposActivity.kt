@@ -1,4 +1,4 @@
-package io.github.mohamedisoliman.mvi.presentation
+package io.github.mohamedisoliman.mvi.ui
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -7,8 +7,10 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
 import io.github.mohamedisoliman.mvi.R
+import io.github.mohamedisoliman.mvi.endlessScrollObservable
 import io.github.mohamedisoliman.mvi.mvibase.MviView
 import io.github.mohamedisoliman.mvi.refreshObservable
+import io.github.mohamedisoliman.mvi.ui.adapter.ReposAdapter
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_github_repos.recycler_view_repos
 import kotlinx.android.synthetic.main.activity_github_repos.swipe_refresh_layout
@@ -33,12 +35,13 @@ class GithubReposActivity : AppCompatActivity(), MviView<ReposIntent, ReposViewS
   }
 
   private fun bind() {
-    reposViewModel.states().subscribe { render(it) }
+    reposViewModel.states()
+        .subscribe { render(it) }
     reposViewModel.processIntents(intents())
   }
 
   override fun intents(): Observable<ReposIntent> =
-    Observable.merge(initialIntent(), refreshReposIntent())
+    Observable.merge(initialIntent(), refreshReposIntent(), getMoreData())
 
   private fun initialIntent(): Observable<ReposIntent> =
     Observable.just(ReposIntent.InitialLoadRepos)
@@ -46,6 +49,11 @@ class GithubReposActivity : AppCompatActivity(), MviView<ReposIntent, ReposViewS
   private fun refreshReposIntent(): Observable<ReposIntent> =
     swipe_refresh_layout.refreshObservable()
         .map { ReposIntent.RefreshRepos }
+
+  private fun getMoreData(): Observable<ReposIntent> =
+    recycler_view_repos.endlessScrollObservable().map {
+      ReposIntent.GetMoreRepos
+    }
 
   private fun setupRecyclerView() {
     recycler_view_repos.layoutManager = LinearLayoutManager(this)
@@ -65,12 +73,12 @@ class GithubReposActivity : AppCompatActivity(), MviView<ReposIntent, ReposViewS
         swipe_refresh_layout.isRefreshing = false
       }
       is ReposViewState.Success -> {
-        swipe_refresh_layout.isEnabled = false
+        swipe_refresh_layout.isRefreshing = false
         reposAdapter.repos = state.repos
       }
 
       is ReposViewState.Failure -> {
-        swipe_refresh_layout.isEnabled = false
+        swipe_refresh_layout.isRefreshing = false
         Toast.makeText(this, "${state.throwable.message}", Toast.LENGTH_LONG)
             .show()
       }

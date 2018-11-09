@@ -1,6 +1,7 @@
 package io.github.mohamedisoliman.mvi.data
 
 import io.github.mohamedisoliman.mvi.data.remote.GithubApi
+import io.reactivex.Observable
 import timber.log.Timber
 
 /**
@@ -9,8 +10,8 @@ import timber.log.Timber
  */
 class Repository(private val githubApi: GithubApi) {
 
-  fun getGithubRepositories() =
-    githubApi.getRepositories()
+  fun getGithubRepositories(since: Long): Observable<List<RepositoryItem>> =
+    githubApi.getRepositories(since)
         .flatMapIterable { it }
         .doOnNext { Timber.i(it?.toString()) }
         .map {

@@ -1,4 +1,4 @@
-package io.github.mohamedisoliman.mvi.presentation
+package io.github.mohamedisoliman.mvi.ui
 
 import io.github.mohamedisoliman.mvi.mvibase.MviAction
 
@@ -8,7 +8,7 @@ import io.github.mohamedisoliman.mvi.mvibase.MviAction
  */
 sealed class ReposAction : MviAction {
     object InitialAction : ReposAction()
-    data class GetMoreItems(val lastId: Int) : ReposAction()
+    data class GetMoreItems(val lastId: Long) : ReposAction()
     data class BookmarkRepo(val repoId: Int) : ReposAction()
     object RefreshRepos : ReposAction()
 }

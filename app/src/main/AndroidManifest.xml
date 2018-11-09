@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="io.github.mohamedisoliman.mvi.presentation.GithubReposActivity">
+        <activity android:name="io.github.mohamedisoliman.mvi.ui.GithubReposActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

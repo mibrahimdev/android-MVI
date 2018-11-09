@@ -1,8 +1,11 @@
 package io.github.mohamedisoliman.mvi.usecase
 
 import io.github.mohamedisoliman.mvi.data.Repository
-import io.github.mohamedisoliman.mvi.presentation.LoadingReposResult
-import io.github.mohamedisoliman.mvi.presentation.ReposAction
+import io.github.mohamedisoliman.mvi.ui.LoadingReposResult
+import io.github.mohamedisoliman.mvi.ui.LoadingReposResult.Failure
+import io.github.mohamedisoliman.mvi.ui.LoadingReposResult.InFlight
+import io.github.mohamedisoliman.mvi.ui.LoadingReposResult.Success
+import io.github.mohamedisoliman.mvi.ui.ReposAction
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
@@ -17,18 +20,19 @@ class GetGithubRepos(val repository: Repository) {
         .subscribeOn(Schedulers.io())
         .flatMap { incomingActions ->
           when (incomingActions) {
-            is ReposAction.InitialAction ->
-
-              repository.getGithubRepositories()
-                  .map<LoadingReposResult> { LoadingReposResult.Success(it) }
-                  .cast(LoadingReposResult::class.java)
-                  .startWith(LoadingReposResult.InFlight)
-                  .onErrorReturn { LoadingReposResult.Failure(it) }
-
-            is ReposAction.RefreshRepos -> Observable.just(LoadingReposResult.DUMMY)//TODO
-            is ReposAction.GetMoreItems -> Observable.just(LoadingReposResult.DUMMY)//TODO
+            is ReposAction.InitialAction -> getRepos()
+            is ReposAction.RefreshRepos -> getRepos()//just refresh the list
+            is ReposAction.GetMoreItems -> getRepos(incomingActions.lastId)
             is ReposAction.BookmarkRepo -> Observable.just(LoadingReposResult.DUMMY)//TODO
           }
         }
+  }
+
+  private fun getRepos(since: Long = 1): Observable<LoadingReposResult>? {
+    return repository.getGithubRepositories(since)
+        .map<LoadingReposResult> { Success(it) }
+        .cast(LoadingReposResult::class.java)
+        .startWith(InFlight)
+        .onErrorReturn { Failure(it) }
   }
 }
