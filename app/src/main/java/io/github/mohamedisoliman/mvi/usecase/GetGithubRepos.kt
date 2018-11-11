@@ -30,7 +30,9 @@ class GetGithubRepos(val repository: Repository) {
 
   private fun getRepos(since: Long = 1): Observable<LoadingReposResult>? {
     return repository.getGithubRepositories(since)
-        .map<LoadingReposResult> { Success(it) }
+        .map<LoadingReposResult> {
+          if (since == 1L) Success(it) else LoadingReposResult.MoreItemSuccess(it)
+        }
         .cast(LoadingReposResult::class.java)
         .startWith(InFlight)
         .onErrorReturn { Failure(it) }

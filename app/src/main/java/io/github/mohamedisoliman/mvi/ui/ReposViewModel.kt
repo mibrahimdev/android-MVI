@@ -13,7 +13,6 @@ import io.github.mohamedisoliman.mvi.ui.ReposViewState.Loading
 import io.github.mohamedisoliman.mvi.usecase.GetGithubRepos
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
 /**
@@ -23,7 +22,6 @@ import io.reactivex.subjects.PublishSubject
 class ReposViewModel : ViewModel(), MviViewModel<ReposIntent, ReposViewState> {
 
   val reposRepistory: Repository by lazy { MVIApp.appDependencies.reposRepository }
-  private val renderer = BehaviorSubject.create<ReposViewState>()
   private val intentsSubject = PublishSubject.create<ReposIntent>()
 
   private var lastId: Long = -1
@@ -39,15 +37,10 @@ class ReposViewModel : ViewModel(), MviViewModel<ReposIntent, ReposViewState> {
     return when (result) {
       is InFlight -> Loading
       is Success -> ReposViewState.Success(result.reposList).also {
-        lastId = it.repos.lastIndex.toLong()
+        lastId = it.repos.last()
+            .id //NOT NICE :(
       }
-      is MoreItemSuccess -> if (previousState is ReposViewState.Success) {
-        val list = previousState.repos
-        list.toMutableList()
-            .addAll(result.reposList)//ADD new Items
-        lastId = list.lastIndex.toLong()
-        ReposViewState.Success(list)
-      } else ReposViewState.Failure(Throwable("Failed to get New Items"))
+      is MoreItemSuccess -> ReposViewState.MoreItemsSuccess(result.reposList)
       is Failure -> ReposViewState.Failure(result.throwable)
       is DUMMY -> ReposViewState.DUMMY
     }

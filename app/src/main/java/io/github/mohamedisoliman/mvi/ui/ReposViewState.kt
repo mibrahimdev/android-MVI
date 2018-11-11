@@ -10,6 +10,7 @@ import io.github.mohamedisoliman.mvi.mvibase.MviViewState
 sealed class ReposViewState : MviViewState {
   object Idle : ReposViewState()
   data class Success(val repos: List<RepositoryItem>) : ReposViewState()
+  data class MoreItemsSuccess(val repos: List<RepositoryItem>) : ReposViewState()
   data class Failure(val throwable: Throwable) : ReposViewState()
   object Loading : ReposViewState()
   object DUMMY : ReposViewState()

@@ -77,6 +77,11 @@ class GithubReposActivity : AppCompatActivity(), MviView<ReposIntent, ReposViewS
         reposAdapter.repos = state.repos
       }
 
+      is ReposViewState.MoreItemsSuccess -> {
+        swipe_refresh_layout.isRefreshing = false
+        reposAdapter.repos += state.repos
+      }
+
       is ReposViewState.Failure -> {
         swipe_refresh_layout.isRefreshing = false
         Toast.makeText(this, "${state.throwable.message}", Toast.LENGTH_LONG)

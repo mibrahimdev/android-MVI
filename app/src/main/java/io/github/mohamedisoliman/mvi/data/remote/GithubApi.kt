@@ -1,5 +1,6 @@
 package io.github.mohamedisoliman.mvi.data.remote
 
+import io.github.mohamedisoliman.mvi.BuildConfig
 import io.github.mohamedisoliman.mvi.data.entities.GithubRepository
 import io.reactivex.Observable
 import retrofit2.http.GET
@@ -12,6 +13,10 @@ import retrofit2.http.Query
 interface GithubApi {
 
   @GET("repositories")
-  fun getRepositories(@Query("since") since: Long): Observable<List<GithubRepository>>
+  fun getRepositories(
+    @Query("since") since: Long,
+    @Query("client_id") clientId: String = BuildConfig.CLIENT_ID,
+    @Query("client_secret") clientSecret: String = BuildConfig.CLIENT_SECRET
+  ): Observable<List<GithubRepository>>
 
 }

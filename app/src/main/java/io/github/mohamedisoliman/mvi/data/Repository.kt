@@ -16,6 +16,7 @@ class Repository(private val githubApi: GithubApi) {
         .doOnNext { Timber.i(it?.toString()) }
         .map {
           RepositoryItem(
+              it.id,
               it.name,
               it.description ?: "EMPTY",
               RepositoryOwner(
