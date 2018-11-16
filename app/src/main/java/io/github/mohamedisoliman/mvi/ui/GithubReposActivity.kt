@@ -38,8 +38,7 @@ class GithubReposActivity : AppCompatActivity(), MviView<ReposIntent, ReposViewS
   }
 
   private fun bind() {
-    reposViewModel.states()
-        .subscribe { render(it) }
+    reposViewModel.states().subscribe { render(it) }
     reposViewModel.processIntents(intents())
   }
 
@@ -55,7 +54,7 @@ class GithubReposActivity : AppCompatActivity(), MviView<ReposIntent, ReposViewS
 
   private fun getMoreData(): Observable<ReposIntent> =
     recycler_view_repos.endlessScrollObservable().map {
-      ReposIntent.GetMoreRepos
+      ReposIntent.GetMoreRepos(reposAdapter.repos.last().id)
     }
 
   private fun bookMarkRepo(): Observable<ReposIntent> {

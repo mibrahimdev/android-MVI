@@ -27,8 +27,6 @@ class ReposViewModel : ViewModel(), MviViewModel<ReposIntent, ReposViewState> {
   val reposRepistory: Repository by lazy { MVIApp.appDependencies.reposRepository }
   private val intentsSubject = PublishSubject.create<ReposIntent>()
 
-  private var lastId: Long = -1
-
   override fun processIntents(intents: Observable<ReposIntent>) {
     intents.subscribe(intentsSubject)
   }
@@ -39,9 +37,7 @@ class ReposViewModel : ViewModel(), MviViewModel<ReposIntent, ReposViewState> {
   ): ReposViewState {
     return when (result) {
       is InFlight -> Loading
-      is Success -> ReposViewState.Success(result.reposList).also {
-        lastId = it.repos.last().id //NOT NICE :(
-      }
+      is Success -> ReposViewState.Success(result.reposList)
       is MoreItemSuccess -> MoreItemsSuccess(result.reposList)
       is Failure -> ReposViewState.Failure(result.throwable)
       is DUMMY -> ReposViewState.DUMMY
@@ -53,7 +49,7 @@ class ReposViewModel : ViewModel(), MviViewModel<ReposIntent, ReposViewState> {
     when (intent) {
       is ReposIntent.RefreshRepos -> ReposAction.RefreshRepos
       is ReposIntent.InitialLoadRepos -> ReposAction.InitialAction
-      is ReposIntent.GetMoreRepos -> ReposAction.GetMoreItems(lastId)
+      is ReposIntent.GetMoreRepos -> ReposAction.GetMoreItems(intent.lastId)
       is ReposIntent.BookmarkRepo -> ReposAction.BookmarkRepo(intent.repositoryItem)
     }
 
