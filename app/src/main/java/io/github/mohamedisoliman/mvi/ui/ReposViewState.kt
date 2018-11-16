@@ -12,6 +12,7 @@ sealed class ReposViewState : MviViewState {
   data class Success(val repos: List<RepositoryItem>) : ReposViewState()
   data class MoreItemsSuccess(val repos: List<RepositoryItem>) : ReposViewState()
   data class Failure(val throwable: Throwable) : ReposViewState()
+  data class SaveRepoSuccess(val message: String) : ReposViewState()
   object Loading : ReposViewState()
   object DUMMY : ReposViewState()
 }

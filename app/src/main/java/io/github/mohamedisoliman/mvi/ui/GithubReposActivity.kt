@@ -5,13 +5,15 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.widget.Toast
 import io.github.mohamedisoliman.mvi.R
+import io.github.mohamedisoliman.mvi.data.RepositoryItem
 import io.github.mohamedisoliman.mvi.endlessScrollObservable
+import io.github.mohamedisoliman.mvi.longToast
 import io.github.mohamedisoliman.mvi.mvibase.MviView
 import io.github.mohamedisoliman.mvi.refreshObservable
 import io.github.mohamedisoliman.mvi.ui.adapter.ReposAdapter
 import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_github_repos.recycler_view_repos
 import kotlinx.android.synthetic.main.activity_github_repos.swipe_refresh_layout
 
@@ -21,8 +23,9 @@ import kotlinx.android.synthetic.main.activity_github_repos.swipe_refresh_layout
  */
 class GithubReposActivity : AppCompatActivity(), MviView<ReposIntent, ReposViewState> {
 
-  private val reposAdapter = ReposAdapter()
   lateinit var reposViewModel: ReposViewModel
+  private val bookmarkItemObservable = PublishSubject.create<RepositoryItem>()
+  private val reposAdapter = ReposAdapter(bookmarkItemObservable)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -41,7 +44,7 @@ class GithubReposActivity : AppCompatActivity(), MviView<ReposIntent, ReposViewS
   }
 
   override fun intents(): Observable<ReposIntent> =
-    Observable.merge(initialIntent(), refreshReposIntent(), getMoreData())
+    Observable.merge(initialIntent(), refreshReposIntent(), getMoreData(), bookMarkRepo())
 
   private fun initialIntent(): Observable<ReposIntent> =
     Observable.just(ReposIntent.InitialLoadRepos)
@@ -54,6 +57,10 @@ class GithubReposActivity : AppCompatActivity(), MviView<ReposIntent, ReposViewS
     recycler_view_repos.endlessScrollObservable().map {
       ReposIntent.GetMoreRepos
     }
+
+  private fun bookMarkRepo(): Observable<ReposIntent> {
+    return bookmarkItemObservable.map { ReposIntent.BookmarkRepo(it) }
+  }
 
   private fun setupRecyclerView() {
     recycler_view_repos.layoutManager = LinearLayoutManager(this)
@@ -84,15 +91,12 @@ class GithubReposActivity : AppCompatActivity(), MviView<ReposIntent, ReposViewS
 
       is ReposViewState.Failure -> {
         swipe_refresh_layout.isRefreshing = false
-        Toast.makeText(this, "${state.throwable.message}", Toast.LENGTH_LONG)
-            .show()
+        longToast("${state.throwable.message}")
       }
 
-      is ReposViewState.DUMMY -> {
-        Toast.makeText(this, "DUMMY", Toast.LENGTH_LONG)
-            .show()
+      is ReposViewState.SaveRepoSuccess -> {
+        longToast(state.message)
       }
-
     }
   }
 

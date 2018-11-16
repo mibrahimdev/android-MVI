@@ -1,5 +1,6 @@
 package io.github.mohamedisoliman.mvi.ui
 
+import io.github.mohamedisoliman.mvi.data.RepositoryItem
 import io.github.mohamedisoliman.mvi.mvibase.MviIntent
 
 /**
@@ -10,5 +11,5 @@ sealed class ReposIntent : MviIntent {
   object InitialLoadRepos : ReposIntent()
   object RefreshRepos : ReposIntent()
   object GetMoreRepos : ReposIntent()
-  data class BookmarkRepo(val repoId: Int) : ReposIntent()
+  data class BookmarkRepo(val repositoryItem: RepositoryItem) : ReposIntent()
 }

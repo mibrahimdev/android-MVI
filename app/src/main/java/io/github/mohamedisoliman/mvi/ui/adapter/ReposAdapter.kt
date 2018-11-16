@@ -5,11 +5,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.squareup.picasso.Picasso
 import io.github.mohamedisoliman.mvi.R
 import io.github.mohamedisoliman.mvi.data.RepositoryItem
 import io.github.mohamedisoliman.mvi.ui.adapter.ReposAdapter.RepoHolder
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.item_repos_recycler.view.bookmark
 import kotlinx.android.synthetic.main.item_repos_recycler.view.owner_avatar
 import kotlinx.android.synthetic.main.item_repos_recycler.view.repo_name
@@ -18,7 +18,8 @@ import kotlinx.android.synthetic.main.item_repos_recycler.view.repo_name
  *
  * Created by Mohamed Ibrahim on 10/21/18.
  */
-class ReposAdapter : RecyclerView.Adapter<RepoHolder>() {
+class ReposAdapter(private val bookmarkItemObservable: PublishSubject<RepositoryItem>) :
+    RecyclerView.Adapter<RepoHolder>() {
 
   var repos: List<RepositoryItem> = emptyList()
     set(value) {
@@ -45,20 +46,23 @@ class ReposAdapter : RecyclerView.Adapter<RepoHolder>() {
     position: Int
   ) {
     holder.bind(repos[position])
-
+    holder.bookMarkButtonClick(repos[position]) { bookmarkItemObservable.onNext(it) }
   }
 
   class RepoHolder(private val itemview: View) : RecyclerView.ViewHolder(itemview) {
 
     fun bind(repositoryItem: RepositoryItem) {
       itemview.repo_name.text = repositoryItem.name
-      itemview.bookmark.setOnClickListener {
-        Toast.makeText(itemview.context, "SAVED FAKELY", Toast.LENGTH_LONG)
-            .show()
-      }
       Picasso.get()
           .load(repositoryItem.owner.avatar)
           .into(itemview.owner_avatar)
+    }
+
+    fun bookMarkButtonClick(
+      repoItem: RepositoryItem,
+      function: (item: RepositoryItem) -> Unit
+    ) {
+      itemview.bookmark.setOnClickListener { function(repoItem) }
     }
 
   }

@@ -6,5 +6,5 @@ package io.github.mohamedisoliman.mvi.data
  */
 data class RepositoryOwner(
         val name: String,
-        val avatar: String
+        val avatar: String = ""
 )
