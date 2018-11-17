@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".SubredditOverview">
+
+  <item
+      android:id="@+id/saved_repos"
+      android:icon="@drawable/ic_view_list_black_24dp"
+      android:title="@string/saved_repos"
+      app:showAsAction="never"/>
+</menu>

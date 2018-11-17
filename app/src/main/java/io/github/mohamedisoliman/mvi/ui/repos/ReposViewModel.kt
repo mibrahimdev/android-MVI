@@ -1,17 +1,23 @@
-package io.github.mohamedisoliman.mvi.ui
+package io.github.mohamedisoliman.mvi.ui.repos
 
 import android.arch.lifecycle.ViewModel
 import io.github.mohamedisoliman.mvi.MVIApp
 import io.github.mohamedisoliman.mvi.data.Repository
 import io.github.mohamedisoliman.mvi.mvibase.MviViewModel
-import io.github.mohamedisoliman.mvi.ui.GithubReposResult.DUMMY
-import io.github.mohamedisoliman.mvi.ui.GithubReposResult.Failure
-import io.github.mohamedisoliman.mvi.ui.GithubReposResult.InFlight
-import io.github.mohamedisoliman.mvi.ui.GithubReposResult.MoreItemSuccess
-import io.github.mohamedisoliman.mvi.ui.GithubReposResult.SaveRepoSuccess
-import io.github.mohamedisoliman.mvi.ui.GithubReposResult.Success
-import io.github.mohamedisoliman.mvi.ui.ReposViewState.Loading
-import io.github.mohamedisoliman.mvi.ui.ReposViewState.MoreItemsSuccess
+import io.github.mohamedisoliman.mvi.ui.repos.ReposViewState.Idle
+import io.github.mohamedisoliman.mvi.ui.repos.GithubReposResult.Failure
+import io.github.mohamedisoliman.mvi.ui.repos.GithubReposResult.InFlight
+import io.github.mohamedisoliman.mvi.ui.repos.GithubReposResult.MoreItemSuccess
+import io.github.mohamedisoliman.mvi.ui.repos.GithubReposResult.SaveRepoSuccess
+import io.github.mohamedisoliman.mvi.ui.repos.GithubReposResult.Success
+import io.github.mohamedisoliman.mvi.ui.repos.ReposViewState.Loading
+import io.github.mohamedisoliman.mvi.ui.repos.ReposViewState.MoreItemsSuccess
+import io.github.mohamedisoliman.mvi.ui.repos.ReposAction.GetMoreItems
+import io.github.mohamedisoliman.mvi.ui.repos.ReposAction.InitialAction
+import io.github.mohamedisoliman.mvi.ui.repos.ReposIntent.BookmarkRepo
+import io.github.mohamedisoliman.mvi.ui.repos.ReposIntent.GetMoreRepos
+import io.github.mohamedisoliman.mvi.ui.repos.ReposIntent.InitialLoadRepos
+import io.github.mohamedisoliman.mvi.ui.repos.ReposIntent.RefreshRepos
 import io.github.mohamedisoliman.mvi.usecase.GetGithubRepos
 import io.github.mohamedisoliman.mvi.usecase.SaveRepo
 import io.reactivex.Observable
@@ -40,17 +46,22 @@ class ReposViewModel : ViewModel(), MviViewModel<ReposIntent, ReposViewState> {
       is Success -> ReposViewState.Success(result.reposList)
       is MoreItemSuccess -> MoreItemsSuccess(result.reposList)
       is Failure -> ReposViewState.Failure(result.throwable)
-      is DUMMY -> ReposViewState.DUMMY
-      is SaveRepoSuccess -> ReposViewState.SaveRepoSuccess(result.message)
+      is SaveRepoSuccess -> ReposViewState.SaveRepoSuccess(
+          result.message
+      )
     }
   }
 
   private fun intentsToActions(intent: ReposIntent): ReposAction =
     when (intent) {
-      is ReposIntent.RefreshRepos -> ReposAction.RefreshRepos
-      is ReposIntent.InitialLoadRepos -> ReposAction.InitialAction
-      is ReposIntent.GetMoreRepos -> ReposAction.GetMoreItems(intent.lastId)
-      is ReposIntent.BookmarkRepo -> ReposAction.BookmarkRepo(intent.repositoryItem)
+      is RefreshRepos -> ReposAction.RefreshRepos
+      is InitialLoadRepos -> InitialAction
+      is GetMoreRepos -> GetMoreItems(
+          intent.lastId
+      )
+      is BookmarkRepo -> ReposAction.BookmarkRepo(
+          intent.repositoryItem
+      )
     }
 
   override fun states(): Observable<ReposViewState> {
@@ -58,13 +69,13 @@ class ReposViewModel : ViewModel(), MviViewModel<ReposIntent, ReposViewState> {
         .compose { actions ->
           actions.publish { shared ->
             Observable.merge<GithubReposResult>(
-                shared.ofType(ReposAction.InitialAction::class.java).flatMap {
+                shared.ofType(InitialAction::class.java).flatMap {
                   GetGithubRepos(reposRepistory).execute(it)
                 },
                 shared.ofType(ReposAction.RefreshRepos::class.java).flatMap {
                   GetGithubRepos(reposRepistory).execute(it)
                 },
-                shared.ofType(ReposAction.GetMoreItems::class.java).flatMap {
+                shared.ofType(GetMoreItems::class.java).flatMap {
                   GetGithubRepos(reposRepistory).execute(it)
                 },
                 shared.ofType(ReposAction.BookmarkRepo::class.java).flatMap {
@@ -75,7 +86,7 @@ class ReposViewModel : ViewModel(), MviViewModel<ReposIntent, ReposViewState> {
         }
         .distinctUntilChanged()
         .scan<ReposViewState>(
-            ReposViewState.Idle
+            Idle
         ) { previousState: ReposViewState, result: GithubReposResult ->
           resultToViewStates(result, previousState)
         }

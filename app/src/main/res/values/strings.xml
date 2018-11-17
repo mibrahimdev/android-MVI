@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MVI</string>
+  <string name="saved_repos">Saved Repos</string>
 </resources>

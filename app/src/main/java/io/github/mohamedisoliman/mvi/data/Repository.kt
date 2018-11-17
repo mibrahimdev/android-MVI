@@ -2,8 +2,8 @@ package io.github.mohamedisoliman.mvi.data
 
 import io.github.mohamedisoliman.mvi.data.local.ReposLocalStore
 import io.github.mohamedisoliman.mvi.data.remote.GithubApi
-import io.github.mohamedisoliman.mvi.ui.GithubReposResult
-import io.github.mohamedisoliman.mvi.ui.GithubReposResult.SaveRepoSuccess
+import io.github.mohamedisoliman.mvi.ui.repos.GithubReposResult
+import io.github.mohamedisoliman.mvi.ui.repos.GithubReposResult.SaveRepoSuccess
 import io.reactivex.Observable
 import timber.log.Timber
 
@@ -42,4 +42,6 @@ class Repository(
             )
         )
   }
+
+  fun getSavedRepos() = reposLocalStore.getSavedRepos()
 }

@@ -1,11 +1,11 @@
 package io.github.mohamedisoliman.mvi.usecase
 
 import io.github.mohamedisoliman.mvi.data.Repository
-import io.github.mohamedisoliman.mvi.ui.GithubReposResult
-import io.github.mohamedisoliman.mvi.ui.GithubReposResult.Failure
-import io.github.mohamedisoliman.mvi.ui.GithubReposResult.InFlight
-import io.github.mohamedisoliman.mvi.ui.GithubReposResult.Success
-import io.github.mohamedisoliman.mvi.ui.ReposAction
+import io.github.mohamedisoliman.mvi.ui.repos.GithubReposResult
+import io.github.mohamedisoliman.mvi.ui.repos.GithubReposResult.Failure
+import io.github.mohamedisoliman.mvi.ui.repos.GithubReposResult.InFlight
+import io.github.mohamedisoliman.mvi.ui.repos.GithubReposResult.Success
+import io.github.mohamedisoliman.mvi.ui.repos.ReposAction
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
@@ -23,7 +23,7 @@ class GetGithubRepos(private val repository: Repository) {
             is ReposAction.InitialAction -> getRepos()
             is ReposAction.RefreshRepos -> getRepos()//just refresh the list
             is ReposAction.GetMoreItems -> getRepos(incomingActions.lastId)
-            is ReposAction.BookmarkRepo -> Observable.just(GithubReposResult.DUMMY)//TODO
+            is ReposAction.BookmarkRepo -> repository.saveRepo(incomingActions.repositoryItem)
           }
         }
   }

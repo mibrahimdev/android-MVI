@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="io.github.mohamedisoliman.mvi.ui.GithubReposActivity">
+        <activity android:name="io.github.mohamedisoliman.mvi.ui.repos.GithubReposActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -24,6 +24,7 @@
         </activity>
 
         <activity android:name=".login.LoginActivity"/>
+      <activity android:name=".ui.savedrepos.SavedReposActivity"/>
     </application>
 
 </manifest>

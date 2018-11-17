@@ -1,4 +1,4 @@
-package io.github.mohamedisoliman.mvi.ui
+package io.github.mohamedisoliman.mvi.ui.repos
 
 import io.github.mohamedisoliman.mvi.data.RepositoryItem
 
@@ -13,5 +13,4 @@ sealed class GithubReposResult {
   data class SaveRepoSuccess(val message: String) : GithubReposResult()
   data class Failure(val throwable: Throwable) : GithubReposResult()
   object InFlight : GithubReposResult()
-  object DUMMY : GithubReposResult()
 }

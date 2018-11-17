@@ -1,4 +1,4 @@
-package io.github.mohamedisoliman.mvi.ui
+package io.github.mohamedisoliman.mvi.ui.repos
 
 import io.github.mohamedisoliman.mvi.data.RepositoryItem
 import io.github.mohamedisoliman.mvi.mvibase.MviViewState
@@ -14,5 +14,4 @@ sealed class ReposViewState : MviViewState {
   data class Failure(val throwable: Throwable) : ReposViewState()
   data class SaveRepoSuccess(val message: String) : ReposViewState()
   object Loading : ReposViewState()
-  object DUMMY : ReposViewState()
 }

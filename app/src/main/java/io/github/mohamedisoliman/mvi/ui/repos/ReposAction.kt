@@ -1,4 +1,4 @@
-package io.github.mohamedisoliman.mvi.ui
+package io.github.mohamedisoliman.mvi.ui.repos
 
 import io.github.mohamedisoliman.mvi.data.RepositoryItem
 import io.github.mohamedisoliman.mvi.mvibase.MviAction
